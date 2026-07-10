@@ -33,6 +33,7 @@ module.exports = {
         arabic: ['var(--font-arabic)', 'serif'],
         bengali: ['var(--font-bengali)', 'sans-serif'],
         sans: ['var(--font-inter)', 'sans-serif'],
+        display: ['var(--font-display)', 'serif'],
       },
       backgroundImage: {
         'star-pattern': "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.06'%3E%3Cpath d='M60 10 L74 46 L110 46 L81 68 L92 104 L60 82 L28 104 L39 68 L10 46 L46 46 Z'/%3E%3C/g%3E%3C/svg%3E\")",
