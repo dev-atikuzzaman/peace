@@ -1,0 +1,15 @@
+{
+  "name": "নূর-এ-হেদায়াহ",
+  "short_name": "নূর-এ-হেদায়াহ",
+  "description": "কুরআন, হাদীস ও আল্লাহর ৯৯ নাম — রেফারেন্সসহ",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B1120",
+  "theme_color": "#0E9F6E",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
