@@ -6,6 +6,41 @@ import { X, Mail, Lock, Loader2, ShieldCheck } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { useAdminSession } from '@/lib/useAdminSession';
 
+// Supabase/GoTrue থেকে আসা কমন এরর মেসেজগুলো বোধগম্য বাংলায় রূপান্তর করে।
+// কোনো এরর অচেনা/খালি/অদ্ভুত শেপের (যেমন literally "{}") হলে একটা সহায়ক
+// ফলব্যাক দেখায়, যাতে ইউজার কাঁচা JSON/অবজেক্ট না দেখে বসে থাকে।
+function safeDump(err) {
+  try {
+    if (err instanceof Error) {
+      return JSON.stringify(err, Object.getOwnPropertyNames(err));
+    }
+    return JSON.stringify(err);
+  } catch {
+    return String(err);
+  }
+}
+
+function translateAuthError(err) {
+  const raw = err?.message ?? (typeof err === 'string' ? err : '');
+  const msg = raw.trim();
+  const status = err?.status ? ` [status ${err.status}]` : '';
+  const name = err?.name ? ` (${err.name})` : '';
+
+  if (/already registered/i.test(msg)) return 'এই ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট আছে — সাইন-ইন করো।';
+  if (/at least 6 characters/i.test(msg)) return 'পাসওয়ার্ড কমপক্ষে ৬ ক্যারেক্টার হতে হবে।';
+  if (/signups not allowed/i.test(msg)) return 'এই প্রজেক্টে নতুন সাইন-আপ বন্ধ করা আছে — Supabase Dashboard → Authentication → Sign In / Providers এ গিয়ে "Allow new user signups" চালু করো।';
+  if (/invalid login credentials/i.test(msg)) return 'ইমেইল বা পাসওয়ার্ড সঠিক নয়।';
+  if (/email not confirmed/i.test(msg)) return 'ইমেইল এখনো ভেরিফাই করা হয়নি — ইমেইলে পাঠানো লিংকে ক্লিক করো।';
+  if (/failed to fetch|networkerror|load failed/i.test(msg)) {
+    return 'Supabase-এ সংযোগ করা যায়নি। NEXT_PUBLIC_SUPABASE_URL ঠিক আছে কিনা এবং ইন্টারনেট কানেকশন চেক করো।';
+  }
+
+  if (!msg || msg === '{}' || msg === '[object Object]') {
+    return `Supabase থেকে বোধগম্য মেসেজ পাওয়া যায়নি${status}${name}। ডিবাগ: ${safeDump(err)} — এই পুরো লেখাটার স্ক্রিনশট Claude-কে পাঠাও, অথবা Supabase Dashboard → Logs → Postgres Logs এ (schema.sql এর on_auth_user_created ট্রিগার ফেইল করছে কিনা) চেক করো।`;
+  }
+  return msg + status;
+}
+
 export default function AuthModal({ onClose }) {
   const { adminExists } = useAdminSession();
   const [mounted, setMounted] = useState(false);
@@ -30,28 +65,38 @@ export default function AuthModal({ onClose }) {
     setNotice('');
     setBusy(true);
 
-    if (mode === 'signup') {
-      const { error: err } = await supabase.auth.signUp({ email, password });
-      setBusy(false);
-      if (err) return setError(err.message);
-      setNotice('ইমেইলে পাঠানো লিংকে ক্লিক করে ভেরিফাই করো, তারপর লোগোতে ট্যাপ করে পাসওয়ার্ড দিয়ে ঢুকে যাও।');
-      return;
-    }
+    try {
+      if (mode === 'signup') {
+        const { data, error: err } = await supabase.auth.signUp({ email, password });
+        if (err) return setError(translateAuthError(err));
+        // Confirm email বন্ধ থাকা প্রজেক্টে signUp সাথে সাথেই সেশন দিয়ে দেয়
+        if (data?.session) {
+          onClose();
+          return;
+        }
+        setNotice('ইমেইলে পাঠানো লিংকে ক্লিক করে ভেরিফাই করো, তারপর লোগোতে ট্যাপ করে পাসওয়ার্ড দিয়ে ঢুকে যাও।');
+        return;
+      }
 
-    if (mode === 'forgot') {
-      const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
-      });
-      setBusy(false);
-      if (err) return setError(err.message);
-      setNotice('পাসওয়ার্ড রিসেট লিংক ইমেইলে পাঠানো হয়েছে।');
-      return;
-    }
+      if (mode === 'forgot') {
+        const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
+        });
+        if (err) return setError(translateAuthError(err));
+        setNotice('পাসওয়ার্ড রিসেট লিংক ইমেইলে পাঠানো হয়েছে।');
+        return;
+      }
 
-    const { error: err } = await supabase.auth.signInWithPassword({ email, password });
-    setBusy(false);
-    if (err) return setError('ইমেইল বা পাসওয়ার্ড সঠিক নয়।');
-    onClose();
+      const { error: err } = await supabase.auth.signInWithPassword({ email, password });
+      if (err) return setError(translateAuthError(err));
+      onClose();
+    } catch (thrown) {
+      // নেটওয়ার্ক/CORS জাতীয় সমস্যা এখানে ধরা পড়বে, ব্রাউজার কনসোলেও লগ হবে
+      console.error('Auth error:', thrown);
+      setError(translateAuthError(thrown));
+    } finally {
+      setBusy(false);
+    }
   }
 
   const tabs = adminExists === false
@@ -135,7 +180,11 @@ export default function AuthModal({ onClose }) {
             </div>
           )}
 
-          {error && <p className="text-xs text-red-400">{error}</p>}
+          {error && (
+            <p className="rounded-xl bg-red-500/10 px-3 py-2 text-xs leading-relaxed text-red-400">
+              {error}
+            </p>
+          )}
           {notice && <p className="text-xs text-emerald-soft">{notice}</p>}
 
           <button
@@ -159,3 +208,4 @@ export default function AuthModal({ onClose }) {
     document.body
   );
 }
+
