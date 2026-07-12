@@ -19,7 +19,7 @@ export default function VerseCard({ verse, isAdmin, onEdit, onDelete }) {
   const citeLine = `— সূরা ${surah?.name_bengali} (${surah?.number}:${verse.ayah_number})`;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-night-700 bg-night-800">
+    <div className="overflow-hidden rounded-2xl border border-night-700/70 bg-night-800/70 backdrop-blur-md">
       {/* Header */}
       <div className="relative bg-gradient-to-br from-emerald-deep via-emerald to-gold/70 px-4 pb-4 pt-4">
         <div className="absolute inset-0 bg-star-pattern opacity-40" />
