@@ -1,4 +1,4 @@
-const CACHE_NAME = 'noor-e-hidayah-v2';
+const CACHE_NAME = 'noor-e-hidayah-v1';
 const APP_SHELL = ['/', '/manifest.json'];
 
 self.addEventListener('install', (event) => {
