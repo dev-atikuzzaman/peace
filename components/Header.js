@@ -12,13 +12,13 @@ function StarLogo({ className }) {
       <path
         d="M24 3 L29 17 L44 17 L32 26 L37 41 L24 32 L11 41 L16 26 L4 17 L19 17 Z"
         fill="url(#g)"
-        stroke="#0E9F6E"
+        stroke="#2bd9ac"
         strokeWidth="1"
       />
       <defs>
         <linearGradient id="g" x1="0" y1="0" x2="48" y2="48">
-          <stop offset="0" stopColor="#12B886" />
-          <stop offset="1" stopColor="#D4AF37" />
+          <stop offset="0" stopColor="#2bd9ac" />
+          <stop offset="1" stopColor="#f5b942" />
         </linearGradient>
       </defs>
     </svg>
