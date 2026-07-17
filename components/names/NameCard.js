@@ -7,7 +7,7 @@ export default function NameCard({ item, isAdmin, onEdit, onDelete }) {
   const shareText = `${item.serial_no}. ${item.name_arabic} (${item.name_english}) — ${item.name_bengali}\n${item.meaning_bn}\n${item.significance_bn}`;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-night-700/70 bg-night-800/70 backdrop-blur-md">
+    <div className="overflow-hidden rounded-2xl border border-night-700/70 bg-night-800/70 shadow-lg shadow-black/20 backdrop-blur-md">
       <div className="relative bg-gradient-to-br from-emerald-deep via-emerald to-gold/70 px-4 py-4">
         <div className="absolute inset-0 bg-star-pattern opacity-40" />
         <div className="relative flex items-start justify-between gap-2">
