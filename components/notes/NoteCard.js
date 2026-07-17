@@ -23,7 +23,7 @@ export default function NoteCard({ item, isAdmin, onEdit, onDelete }) {
   const shareText = `${item.title}\n\n${item.content || ''}`;
 
   return (
-    <div className="rounded-2xl border border-night-700/70 bg-night-800/70 p-4 backdrop-blur-md">
+    <div className="rounded-2xl border border-night-700/70 bg-night-800/70 p-4 shadow-lg shadow-black/20 backdrop-blur-md">
       <div className="mb-1.5 flex items-start justify-between gap-2">
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="rounded-full bg-night-700 px-2 py-0.5 text-[10px] font-medium text-ink-300">
