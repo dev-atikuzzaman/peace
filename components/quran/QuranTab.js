@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, BookOpenText } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { useAdminSession } from '@/lib/useAdminSession';
+import TabHeader from '../TabHeader';
 import VerseSearchBar from './VerseSearchBar';
 import VerseCard from './VerseCard';
 import VerseEditModal from './VerseEditModal';
@@ -71,6 +72,7 @@ export default function QuranTab() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-4">
+      <TabHeader icon={BookOpenText} title="কুরআন" subtitle="আয়াত, তরজমা, তাফসীর ও সংশ্লিষ্ট হাদীস" />
       <div className="mb-4 flex items-center gap-2">
         <div className="flex-1">
           <VerseSearchBar value={query} onChange={setQuery} />
@@ -81,7 +83,7 @@ export default function QuranTab() {
               setEditing(null);
               setShowEditor(true);
             }}
-            className="flex shrink-0 items-center gap-1 rounded-xl bg-emerald px-3 py-2.5 text-xs font-semibold text-night-950"
+            className="flex shrink-0 items-center gap-1 rounded-full bg-gradient-to-r from-emerald to-gold px-4 py-2.5 text-xs font-semibold text-night-950 shadow-lg shadow-black/30"
           >
             <Plus size={15} /> আয়াত
           </button>
