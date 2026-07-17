@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, ScrollText, Search } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { useAdminSession } from '@/lib/useAdminSession';
+import TabHeader from '../TabHeader';
 import HadithCard from './HadithCard';
 import HadithEditModal from './HadithEditModal';
 
@@ -51,8 +52,10 @@ export default function HadithTab() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-4">
+      <TabHeader icon={ScrollText} title="হাদীস" subtitle="৮০/২০ নীতিতে সবচেয়ে গুরুত্বপূর্ণ হাদীস" />
       <div className="mb-3 flex items-center gap-2">
-        <div className="flex-1 rounded-xl border border-night-700 bg-night-800 px-3.5 py-2.5">
+        <div className="flex flex-1 items-center gap-2 rounded-full border border-night-700/70 bg-night-800/70 px-4 py-2.5 backdrop-blur-sm">
+          <Search size={16} className="shrink-0 text-ink-500" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -66,7 +69,7 @@ export default function HadithTab() {
               setEditing(null);
               setShowEditor(true);
             }}
-            className="flex shrink-0 items-center gap-1 rounded-xl bg-emerald px-3 py-2.5 text-xs font-semibold text-night-950"
+            className="flex shrink-0 items-center gap-1 rounded-full bg-gradient-to-r from-emerald to-gold px-4 py-2.5 text-xs font-semibold text-night-950 shadow-lg shadow-black/30"
           >
             <Plus size={15} /> হাদীস
           </button>
@@ -78,8 +81,10 @@ export default function HadithTab() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`whitespace-nowrap rounded-full border px-3 py-1.5 text-xs font-medium ${
-              filter === f ? 'border-emerald-soft bg-emerald-soft/10 text-emerald-soft' : 'border-night-700 text-ink-500'
+            className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors ${
+              filter === f
+                ? 'bg-gradient-to-r from-emerald to-gold text-night-950 shadow-md shadow-black/20'
+                : 'border border-night-700 text-ink-500'
             }`}
           >
             {f}

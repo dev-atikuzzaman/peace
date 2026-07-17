@@ -14,7 +14,7 @@ export default function HadithCard({ item, isAdmin, onEdit, onDelete }) {
   const tagClass = TAG_STYLE[item.importance_tag] || 'bg-night-700 text-ink-500';
 
   return (
-    <div className="rounded-2xl border border-night-700/70 bg-night-800/70 p-4 backdrop-blur-md">
+    <div className="rounded-2xl border border-night-700/70 bg-night-800/70 p-4 shadow-lg shadow-black/20 backdrop-blur-md">
       <div className="mb-2 flex items-start justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="font-bengali text-[15px] font-semibold text-ink-100">{item.topic_bn}</h3>
